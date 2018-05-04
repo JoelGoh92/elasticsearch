@@ -18,6 +18,7 @@
  */
 package org.elasticsearch.search.aggregations.bucket.geogrid;
 
+import com.carrotsearch.randomizedtesting.generators.RandomPicks;
 import org.elasticsearch.ExceptionsHelper;
 import org.elasticsearch.common.unit.DistanceUnit;
 import org.elasticsearch.common.xcontent.XContentParseException;
@@ -45,6 +46,17 @@ public class GeoHashGridParserTests extends ESTestCase {
         int precision = randomIntBetween(1, 12);
         XContentParser stParser = createParser(JsonXContent.jsonXContent,
                 "{\"field\":\"my_loc\", \"precision\":\"" + precision + "\", \"size\": \"500\", \"shard_size\": \"550\"}");
+        XContentParser.Token token = stParser.nextToken();
+        assertSame(XContentParser.Token.START_OBJECT, token);
+        // can create a factory
+        assertNotNull(GeoGridAggregationBuilder.parse("geohash_grid", stParser));
+    }
+
+    public void testParseOpenLocationCode() throws Exception {
+        int precision = RandomPicks.randomFrom(random(), GeoPlusCodeHandler.ALLOWED_LENGTHS)
+        XContentParser stParser = createParser(JsonXContent.jsonXContent,
+            "{\"field\":\"my_loc\", \"type\":\"pluscode\", \"precision\":\"" + precision +
+                "\", \"size\": \"500\", \"shard_size\": \"550\"}");
         XContentParser.Token token = stParser.nextToken();
         assertSame(XContentParser.Token.START_OBJECT, token);
         // can create a factory

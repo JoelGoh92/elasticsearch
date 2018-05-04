@@ -18,6 +18,7 @@
  */
 package org.elasticsearch.search.aggregations.bucket.geogrid;
 
+import com.carrotsearch.randomizedtesting.generators.RandomPicks;
 import org.apache.lucene.document.LatLonDocValuesField;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
@@ -65,6 +66,11 @@ public class GeoHashGridAggregatorTests extends AggregatorTestCase {
     public void testHashcodeWithSeveralDocs() throws IOException {
         int precision = randomIntBetween(1, 12);
         testWithSeveralDocs(GeoHashType.GEOHASH, precision);
+    }
+
+    public void testPluscodeWithSeveralDocs() throws IOException {
+        int precision = RandomPicks.randomFrom(random(), GeoPlusCodeHandler.ALLOWED_LENGTHS);
+        testWithSeveralDocs(GeoHashType.PLUSCODE, precision);
     }
 
     private void testWithSeveralDocs(GeoHashType type, int precision)
